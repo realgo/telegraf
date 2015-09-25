@@ -2,6 +2,7 @@ package ping
 
 import (
 	"errors"
+	"log"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -166,6 +167,9 @@ func processPingOutput(out string) (int, int, float64, error) {
 				return trans, recv, avg, err
 			}
 		}
+	}
+	if err == nil && avg < 2.0 {
+		log.Printf("%s\n", out)
 	}
 	return trans, recv, avg, err
 }
