@@ -10,49 +10,12 @@
 on the UDP listener before the next flush. NOTE: gauge, counter, and set
 measurements are aggregated as they arrive, so this is not a straight counter of
 the number of total messages that the listener can handle between flushes.
+- **templates** []string: Templates for transforming statsd buckets into influx
+measurements and tags.
 
-#### Statsd bucket -> InfluxDB Mapping
+#### Statsd bucket -> InfluxDB Templates
 
-By default, statsd buckets are converted to measurement names with the rules:
-- "." -> "_"
-- "-" -> "__"
-
-This plugin also accepts a list of config tables to describe a mapping of a statsd
-bucket to an InfluxDB measurement name and tags.
-
-Each mapping must specify a match glob pattern. It can optionally take a name
-for the measurement and a map of bucket indices to tag names.
-
-For example, the following configuration:
-
-```
-    [[statsd.mappings]]
-    match = "users.current.*.*"
-    name = "current_users"
-    [statsd.mappings.tagmap]
-    unit = 0
-    server = 2
-    service = 3
-
-    [[statsd.mappings]]
-    match = "deploys.*.*"
-    name = "service_deploys"
-    [statsd.mappings.tagmap]
-    service_type = 1
-    service_name = 2
-```
-
-Will map statsd -> influx like so:
-```
-users.current.den001.myapp:32|g
-=> [server="den001" service="myapp" unit="users"] statsd_current_users_gauge value=32
-
-deploys.test.myservice:1|c
-=> [service_name="myservice" service_type="test"] statsd_service_deploys_counter value=1
-
-random.jumping-sheep:10|c
-=> [] statsd_random_jumping__sheep_counter value=10
-```
+TODO [summarize this](https://github.com/influxdb/influxdb/tree/master/services/graphite#templates)
 
 #### Description
 

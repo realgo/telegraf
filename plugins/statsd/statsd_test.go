@@ -121,15 +121,78 @@ func TestParse_DefaultNameParsing(t *testing.T) {
 	}
 }
 
-// Test that name mappings match and work
-func TestParse_NameMap(t *testing.T) {
+// Test that template name transformation works
+func TestParse_Template(t *testing.T) {
+	s := NewStatsd()
+	s.Templates = []string{
+		"measurement.measurement.host.service",
+	}
+
+	lines := []string{
+		"cpu.idle.localhost:1|c",
+		"cpu.busy.host01.myservice:11|c",
+	}
+
+	for _, line := range lines {
+		err := s.parseStatsdLine(line)
+		if err != nil {
+			t.Errorf("Parsing line %s should not have resulted in an error\n", line)
+		}
+	}
+
+	validations := []struct {
+		name  string
+		value int64
+	}{
+		{
+			"cpu_idle",
+			1,
+		},
+		{
+			"cpu_busy",
+			11,
+		},
+	}
+
+	for _, test := range validations {
+		err := test_validate_counter(test.name, test.value, s.counters)
+		if err != nil {
+			t.Error(err.Error())
+		}
+	}
+
+}
+
+// Test that template tags are applied
+func TestParse_TemplateTags(t *testing.T) {
 	if false {
 		t.Errorf("TODO")
 	}
 }
 
-// Test that name map tags are applied properly
-func TestParse_NameMapTags(t *testing.T) {
+// Test that template filters properly
+func TestParse_TemplateFilter(t *testing.T) {
+	if false {
+		t.Errorf("TODO")
+	}
+}
+
+// Test that most specific template it chosen
+func TestParse_TemplateSpecificity(t *testing.T) {
+	if false {
+		t.Errorf("TODO")
+	}
+}
+
+// Test that fields are parsed correctly
+func TestParse_Fields(t *testing.T) {
+	if false {
+		t.Errorf("TODO")
+	}
+}
+
+// Test that tags within the bucket are parsed correctly
+func TestParse_Tags(t *testing.T) {
 	if false {
 		t.Errorf("TODO")
 	}
